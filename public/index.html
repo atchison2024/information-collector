@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Information Collection</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .hidden { display: none; }
+    .form-field { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+  <div id="password-section">
+    <h2>Enter Password</h2>
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="checkPassword()">CONFIRM</button>
+    <p id="error" style="color: red;"></p>
+  </div>
+
+  <div id="form-section" class="hidden">
+    <h2>Information Collection Form</h2>
+    <form id="info-form">
+      <div class="form-field">
+        <label>Name:</label><br>
+        <input type="text" name="name" required>
+      </div>
+      <div class="form-field">
+        <label>Age:</label><br>
+        <input type="number" name="age" required>
+      </div>
+      <div class="form-field">
+        <label>Occupation:</label><br>
+        <input type="text" name="occupation" required>
+      </div>
+      <button type="submit">SUBMIT</button>
+    </form>
+    <p id="result" style="color: green;"></p>
+  </div>
+
+  <script>
+    const PASSWORD = "your-secret-password";
+
+    function checkPassword() {
+      const entered = document.getElementById("password").value;
+      const error = document.getElementById("error");
+
+      if (entered === PASSWORD) {
+        document.getElementById("password-section").classList.add("hidden");
+        document.getElementById("form-section").classList.remove("hidden");
+      } else {
+        error.textContent = "Incorrect password. Please try again.";
+      }
+    }
+
+    document.getElementById("info-form").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData.entries());
+
+      const response = await fetch("/submit", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.text();
+      document.getElementById("result").textContent = result;
+      event.target.reset();
+    });
+  </script>
+
+</body>
+</html>
