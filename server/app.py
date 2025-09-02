@@ -1,10 +1,12 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import json
 import os
 
 app = Flask(__name__, static_folder='../public', static_url_path='')
 
-DATA_FILE = 'server/data.json'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(BASE_DIR, 'data.json')
+print("Received data:", data)
 
 @app.route('/')
 def index():
@@ -17,18 +19,19 @@ def submit():
     if not all(k in data for k in ['name', 'age', 'occupation']):
         return "Missing fields", 400
 
+    # Make sure file exists
     if not os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'w') as f:
             json.dump([], f)
 
     with open(DATA_FILE, 'r+') as f:
-        existing = json.load(f)
+        try:
+            existing = json.load(f)
+        except json.JSONDecodeError:
+            existing = []
         existing.append(data)
         f.seek(0)
+        f.truncate()
         json.dump(existing, f, indent=2)
 
     return "Information saved successfully!"
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
