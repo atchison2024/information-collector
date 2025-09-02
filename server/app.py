@@ -6,7 +6,6 @@ app = Flask(__name__, static_folder='../public', static_url_path='')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'data.json')
-print("Received data:", data)
 
 @app.route('/')
 def index():
