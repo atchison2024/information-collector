@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 import json
 import os
 
 app = Flask(__name__, static_folder='../public', static_url_path='')
 
-DATA_FILE = 'data.json'
+DATA_FILE = 'server/data.json'
 
 @app.route('/')
 def index():
@@ -28,3 +28,7 @@ def submit():
         json.dump(existing, f, indent=2)
 
     return "Information saved successfully!"
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
